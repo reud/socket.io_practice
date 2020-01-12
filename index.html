@@ -1,5 +1,6 @@
 <!doctype html>
 <html>
+<script src="/socket.io/socket.io.js"></script>
 <head>
     <title>Socket.IO chat</title>
     <style>
@@ -52,9 +53,27 @@
 </head>
 <body>
 <ul id="messages"></ul>
-<form action="">
-    <input id="m" autocomplete="off"/>
-    <button>Send</button>
+<form id="chatForm" action="">
+    <input name="msg" id="m" autocomplete="off"/>
+    <button id="send">Send</button>
 </form>
 </body>
+<script>
+    // client side
+    const socket = io();
+
+    const frm =  document.getElementById('chatForm');
+    frm.addEventListener('submit',(ev) => {
+        console.log('ev'+ev);
+        ev.preventDefault();
+        socket.emit('chat message',frm.msg.value);
+    },false);
+
+    socket.on('chat message', (msg) => {
+        const messages = document.getElementById('messages');
+        const messageEl = document.createElement('li');
+        messageEl.textContent = msg;
+        messages.appendChild(messageEl);
+    })
+</script>
 </html>
